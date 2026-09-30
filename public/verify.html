@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Verify certificate - Certiflow</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='11' fill='%23f6c453'/%3E%3Ccircle cx='20' cy='20' r='8' fill='%23151033'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="nav"><a class="brand" href="/"><span>Certi<b>flow</b></span></a><nav><a href="/">Generator</a></nav></header>
+<div class="vbox" id="box"><p>Checking certificate&hellip;</p></div>
+<script>
+// The QR code on every certificate opens this page. It asks the server whether the ID exists.
+const id = decodeURIComponent(location.pathname.split('/').pop()).toUpperCase();
+const esc = s => String(s || '-').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+fetch('/api/verify/' + encodeURIComponent(id)).then(r => r.json()).then(d => {
+  const box = document.getElementById('box');
+  if (d.valid) {
+    const c = d.certificate;
+    box.innerHTML = `<div class="tick">&#10003;</div><h2>Genuine certificate</h2><p>Issued through Certiflow and found in the register.</p>
+      <dl><dt>Awarded to</dt><dd>${esc(c.name)}</dd><dt>Course</dt><dd>${esc(c.course)}</dd><dt>Institute</dt><dd>${esc(c.institute)}</dd>
+      <dt>Issue date</dt><dd>${esc(c.date)}</dd><dt>Certificate ID</dt><dd>${esc(c.id)}</dd></dl>`;
+  } else {
+    box.innerHTML = `<div class="tick bad">&times;</div><h2>${d.sample ? 'Sample certificate' : 'Not found'}</h2>
+      <p>${d.sample ? 'This is a watermarked sample and is not a real certificate.' : 'No certificate with the ID <b>' + esc(id) + '</b> exists in our register.'}</p>`;
+  }
+}).catch(() => { document.getElementById('box').innerHTML = '<p>Could not reach the server.</p>'; });
+</script>
+</body>
+</html>

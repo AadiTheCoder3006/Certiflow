@@ -1,0 +1,4 @@
+{
+  "outputDirectory": "public",
+  "rewrites": [{ "source": "/verify/:id", "destination": "/verify.html" }]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "certiflow",
+  "version": "1.0.0",
+  "description": "Bulk certificate generator - HTML/CSS/JS front end; Node.js back end (local server.js or Vercel serverless /api)",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "license": "MIT"
+}
