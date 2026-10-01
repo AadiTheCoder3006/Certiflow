@@ -58,23 +58,6 @@ Don't want to read? Just try it. It takes about one minute.
 
 ---
 
-## 📸 Screenshots
-
-> A picture is worth a thousand words. Here is how Certiflow looks.
-
-<div align="center">
-
-### 🏠 Home page
-<img src="assets/screenshots/home.png" alt="Certiflow home page" width="85%">
-
-### 🖼️ Live certificate preview
-<img src="assets/screenshots/preview.png" alt="Live certificate preview with QR code" width="85%">
-
-### 🎨 Three templates to choose from
-<img src="assets/screenshots/templates.png" alt="Classic, Modern and Minimal templates" width="85%">
-
-### ✅ Certificate verification page
-<img src="assets/screenshots/verify.png" alt="Certificate verification page" width="85%">
 
 </div>
 
