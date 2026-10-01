@@ -1,62 +1,219 @@
-# Certiflow - Bulk Certificate Generator
+<div align="center">
 
-Front end: **HTML + CSS + JavaScript** (no frameworks, no libraries).
-Back end: **Node.js**, no npm packages. Two ways to run the same app:
+# 🎓 Certiflow
 
-| Where | Back end used | Data storage |
-|---|---|---|
-| Your computer (`npm start`) | `server.js` (built-in `http` module) | `data/db.json` file |
-| Vercel | serverless functions in `/api` | Upstash Redis (free) via `lib/db.js` |
+### One spreadsheet. Hundreds of certificates. Every one verifiable.
 
-The front end in `public/` is identical in both cases.
+Make beautiful, print-ready certificates for your whole class, team, or event in just a few clicks.
+No design skills. No sign-up wall. No software to install.
 
-## Project layout
-```
-public/                 the website: index.html, verify.html, css/style.css, js/*.js
-api/                    Vercel serverless functions: leads, session, batches, stats, verify/[id]
-lib/                    shared helpers for the functions + tiny key-value store (db.js)
-server.js               local server (same API routes as /api) - not used by Vercel
-vercel.json             serves /public and rewrites /verify/<ID> to verify.html
-sample_students_list.xlsx   test file for the upload step
-```
+<br>
 
-## Run locally
-1. Install Node 18+.
-2. In this folder run `npm start`, then open **http://localhost:3000** (do not double-click index.html).
-3. Choose `sample_students_list.xlsx`, or click "Try with sample data".
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Open_Certiflow-f6c453?style=for-the-badge&labelColor=151033)](https://certiflow-chi.vercel.app/)
 
-## Deploy to Vercel
-1. Push this folder's contents to a GitHub repo (`api/`, `public/`, `vercel.json` must be at the repo root).
-2. vercel.com > **Add New > Project** > import the repo > Framework Preset **Other** > leave build settings empty > **Deploy**.
-3. Project > **Storage** > **Create Database** > **Upstash Redis** (free) > connect to the project
-   (adds `KV_REST_API_URL` and `KV_REST_API_TOKEN`). **Redeploy** once.
-4. Open the live URL and test: sample data > Unlock > Download all > scan a QR code.
-   `GET /api/stats` shows `"persistent": true` when the database is connected.
+![Made with HTML CSS JS](https://img.shields.io/badge/Made%20with-HTML%20%7C%20CSS%20%7C%20JavaScript-ff8a4c?style=flat-square)
+![Node.js](https://img.shields.io/badge/Backend-Node.js-3c873a?style=flat-square&logo=node.js&logoColor=white)
+![Zero Dependencies](https://img.shields.io/badge/Dependencies-0-success?style=flat-square)
+![License MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
 
-Without step 3 the app still runs, but issued IDs are kept in memory only and may disappear.
+**[✨ Try it now](https://certiflow-chi.vercel.app/)** · **[📸 Screenshots](#-screenshots)** · **[🧰 Features](#-what-can-certiflow-do)**
 
-## Workflow
-1. **Recipients** - upload .xlsx / .csv, map Name / Course / Date / Extra columns (different course per row is supported).
-2. **Certificate text** - institute, title, intro and action lines, signatory.
-3. **Design** - Classic / Modern / Minimal, accent colour, logo, signature (these stay in the browser).
-4. **Live preview** - A4 landscape, page through every recipient, QR + unique ID.
-5. **Free** - 5 watermarked sample certificates as one PDF.
-6. **Unlock (free)** - form saves the lead, returns a token: up to 500 certificates, no watermark,
-   ZIP of PDFs + `register.csv`, or one combined PDF.
-7. **Verify** - each QR opens `/verify/<ID>`, which checks the register.
+</div>
 
-## API
-| Route | Purpose |
+---
+
+## 👋 What is Certiflow?
+
+Imagine you finished a course, a workshop, or a hackathon, and now you have to make **200 certificates**.
+Typing every name by hand? Copy-pasting into Canva again and again? 😩
+
+**Certiflow fixes this.** You upload one Excel or CSV file with your list of names, pick a design, and Certiflow creates every certificate for you. Each one gets:
+
+- 🧑 the person's own **name**
+- 📚 the right **course**
+- 🔖 a **unique certificate ID**
+- 🔳 a **QR code** that anyone can scan to check if the certificate is real
+
+That's it. Upload → Map → Design → Download. ✅
+
+---
+
+## 🚀 Live Demo
+
+Don't want to read? Just try it. It takes about one minute.
+
+<div align="center">
+
+### 👉 [**https://certiflow-chi.vercel.app/**](https://certiflow-chi.vercel.app/) 👈
+
+</div>
+
+**Quick test (no file needed):**
+
+1. Open the link above
+2. Click **"Try with sample data →"**
+3. Watch your first certificate appear live 🎉
+4. Use the ‹ › arrows to flip through every person
+5. Change the design, colour, or text and see it update instantly
+
+---
+
+## 📸 Screenshots
+
+> A picture is worth a thousand words. Here is how Certiflow looks.
+
+<div align="center">
+
+### 🏠 Home page
+<img src="assets/screenshots/home.png" alt="Certiflow home page" width="85%">
+
+### 🖼️ Live certificate preview
+<img src="assets/screenshots/preview.png" alt="Live certificate preview with QR code" width="85%">
+
+### 🎨 Three templates to choose from
+<img src="assets/screenshots/templates.png" alt="Classic, Modern and Minimal templates" width="85%">
+
+### ✅ Certificate verification page
+<img src="assets/screenshots/verify.png" alt="Certificate verification page" width="85%">
+
+</div>
+
+---
+
+## 🧰 What can Certiflow do?
+
+### 📂 Easy data upload
+- Upload **Excel (`.xlsx`)**, **CSV**, or **TSV** files
+- **Drag and drop** your file, or click to choose it
+- Don't have a file yet? Download the **sample CSV** or use the built-in **sample data**
+
+### 🧩 Smart column mapping
+- Tell Certiflow which column is the **Name**, **Course**, **Date**, and an **Extra line** (like Grade or Score)
+- Missing a column? Type the course or date once and it is used for everyone
+- **Different course for each person?** No problem. Certiflow reads the course from every row
+
+### ✍️ Your own words
+- Institute / organisation name
+- Certificate title (for example, *Certificate of Completion*)
+- Intro line and action line (for example, *"This is to certify that… has successfully completed…"*)
+- Signatory name and designation
+
+### 🎨 Beautiful designs
+- **3 templates:** Classic, Modern, and Minimal
+- **5 ready colours** plus a colour picker for any shade you like
+- Add your own **logo** and **signature image**
+- 🔒 Your logo and signature **never leave your browser**
+
+### 👀 Live preview
+- See the certificate change **as you type**
+- Flip through every recipient with the previous / next buttons
+- **A4 landscape**, ready to print
+
+### 🔐 Every certificate can be verified
+- Each certificate has a **unique ID** like `CFL-7K3M-Q9XA-2WPD`
+- IDs avoid confusing letters (no `0`, `O`, `1`, `I`), so they are easy to read aloud
+- A **QR code** on the certificate opens a public **verify page**
+- Anyone can also type the ID into the **"Verify"** box on the home page
+
+### 📦 Download the way you like
+| Option | What you get |
 |---|---|
-| `POST /api/leads` | Unlock form: saves the lead, returns an access token |
-| `GET /api/session?token=` | Is the saved token still valid? |
-| `POST /api/batches` | (token required) issues unique IDs for up to 500 certificates |
-| `GET /api/verify/:id` | Look up an ID (used by the QR page) |
-| `GET /api/stats` | Counters for a demo |
+| 🆓 **Free sample** | 5 watermarked certificates in one PDF |
+| 🔓 **Unlocked (free)** | Up to **500 certificates** per run, **no watermark** |
+| 🗂️ **ZIP file** | One PDF for every person + a `register.csv` with all IDs and verify links |
+| 📄 **Combined PDF** | Every certificate together in a single PDF |
 
-## Points to explain in the interview
-- Spreadsheets, logos and signatures are processed in the browser. Only names/courses of unlocked batches go to the server, to build the verification register.
-- The server, not the browser, generates certificate IDs, so they cannot be forged client-side.
-- The 500 limit and the token check are enforced on the server too.
-- CSV parser, XLSX reader, QR generator, PDF writer and ZIP writer are all hand-written (no libraries).
-- Legacy `.xls` is not supported: save as `.xlsx` or `.csv`.
+---
+
+## 🪄 How it works
+
+```
+ ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌────────────┐
+ │ 1. Upload│ →  │  2. Map  │ →  │ 3. Design│ →  │ 4. Download│
+ │ Excel/CSV│    │ columns  │    │ & preview│    │ PDF / ZIP  │
+ └──────────┘    └──────────┘    └──────────┘    └────────────┘
+```
+
+1. **Upload** your list of recipients
+2. **Map** the columns (Name, Course, Date, Extra line)
+3. **Write** the certificate text and **pick** a design
+4. **Preview** every certificate live
+5. **Download** 5 free samples, or **unlock for free** to get the full batch
+6. **Share**. Anyone can scan the QR code to confirm a certificate is genuine
+
+---
+
+## 🔒 Your privacy, in simple words
+
+- 📊 Your spreadsheet is **read inside your browser**
+- 🖼️ Your logo and signature **stay in your browser**
+- ☁️ Only when you create a full (unlocked) batch, the **name, course, date, institute, and title** are sent to the server. This is needed to build the verification register.
+- 🛡️ Certificate IDs are made by the **server**, not the browser, so nobody can fake them
+- 🛡️ The 500 limit and the access check are also enforced on the **server**
+
+---
+
+## 🧱 Tech stack
+
+| Part | Built with |
+|---|---|
+| 🖥️ Front end | Plain **HTML, CSS and JavaScript** (no frameworks, no libraries) |
+| ⚙️ Back end | **Node.js** built-in `http` module |
+| 💾 Storage | One simple **JSON file** (no database needed) |
+| 🔳 QR codes | Own QR generator, written from the QR spec (Reed-Solomon + masking) |
+| 📄 PDF / ZIP | Own lightweight PDF writer and ZIP writer |
+| 📊 Excel reading | Own XLSX reader (an XLSX file is a ZIP of XML) |
+
+Everything is built from scratch. That means the project is **tiny, fast, and easy to understand**. 💪
+
+---
+
+## 🗺️ Ideas for the future
+
+- [ ] More certificate templates
+- [ ] Custom fonts
+- [ ] Send certificates directly by email
+- [ ] Dashboard to see all issued certificates
+- [ ] Support for more languages
+
+Have an idea? Open an issue and tell me! 💬
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! 🙌
+
+1. **Fork** this repository
+2. Create a branch: `git checkout -b my-new-feature`
+3. Make your changes and commit: `git commit -m "Add my new feature"`
+4. Push it: `git push origin my-new-feature`
+5. Open a **Pull Request**
+
+Found a bug? Please open an **Issue** and explain what happened. Screenshots help a lot! 📸
+
+---
+
+## 📜 License
+
+This project is licensed under the **MIT License**. You are free to use, change, and share it.
+
+---
+
+## 👨‍💻 Credits
+
+<div align="center">
+
+### Designed & developed with ❤️ by
+
+## **Aayush Batole**
+
+*Thank you for checking out Certiflow!*
+
+If this project helped you, please give it a ⭐ on GitHub. It really makes my day. 😊
+
+<br>
+
+**[🚀 Try Certiflow Live](https://certiflow-chi.vercel.app/)**
+
+</div>
