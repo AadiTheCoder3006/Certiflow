@@ -11,7 +11,7 @@ import { buildPdf, buildZip, downloadBlob, canvasToJpeg, safeName, csvCell } fro
 const $ = id => document.getElementById(id);
 const SAMPLE_ID = 'SMP-XXXX-XXXX-XXXX';
 const ORIGIN = location.protocol.startsWith('http') ? location.origin : 'http://localhost:3000';
-const S = { headers: [], rows: [], idx: 0, logo: null, sig: null, token: localStorage.getItem('cf_token') || '', limit: 500 };
+const S = { headers: [], rows: [], idx: 0, logo: null, sig: null, limit: 500 };
 
 const SAMPLE = {
   name: 'sample_students_list.csv',
@@ -106,13 +106,10 @@ function refresh() {
     $('courseChips').appendChild(b);
   });
 
-  const unlocked = document.body.classList.contains('unlocked');
-  paint($('certCanvas').getContext('2d'), cur, SAMPLE_ID, !unlocked);
-  $('warnBox').hidden = !(unlocked && list.length > S.limit);
+  paint($('certCanvas').getContext('2d'), cur, SAMPLE_ID, false);
+  $('warnBox').hidden = !(list.length > S.limit);
   $('warnBox').textContent = `Only the first ${S.limit} recipients will be issued in one run.`;
-  if (!$('dlNote').dataset.done) $('dlNote').textContent = unlocked
-    ? `Unlocked: ${Math.min(list.length, S.limit)} clean certificates with live QR verification, as a ZIP of PDFs + register CSV.`
-    : 'Free: first 5 certificates (watermarked, sample QR). Unlock below for the full batch, clean PDFs and hosted QR verification.';
+  if (!$('dlNote').dataset.done) $('dlNote').textContent = `${Math.min(list.length, S.limit)} clean certificates with live QR verification, as a ZIP of PDFs + register CSV.`;
 }
 
 /* ------------------------- 3. exporting ------------------------- */
@@ -128,9 +125,9 @@ $('dlSampleBtn').onclick = async () => {
   const btn = $('dlSampleBtn'); btn.disabled = true;
   try {
     const sample = list.slice(0, 5), pages = [], ctx = canvas.getContext('2d');
-    for (let i = 0; i < sample.length; i++) { paint(ctx, sample[i], SAMPLE_ID, true); pages.push(await page()); progress(i + 1, sample.length); await tick(); }
+    for (let i = 0; i < sample.length; i++) { paint(ctx, sample[i], SAMPLE_ID, false); pages.push(await page()); progress(i + 1, sample.length); await tick(); }
     downloadBlob(buildPdf(pages, 'Certiflow sample certificates'), 'sample-certificates-certiflow.pdf');
-    $('dlNote').dataset.done = 1; $('dlNote').innerHTML = `<b>${sample.length} sample certificates downloaded (watermarked).</b> Unlock below for the full batch.`;
+    $('dlNote').dataset.done = 1; $('dlNote').innerHTML = `<b>${sample.length} sample certificates downloaded.</b>`;
   } catch (e) { toast(e.message, true); } finally { btn.disabled = false; progress(1, 1); }
 };
 
@@ -141,10 +138,10 @@ async function exportFull(kind) {
     progress(0, items.length, 'Registering certificates on the server\u2026');
     const res = await fetch('/api/batches', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: S.token, institute: $('tInstitute').value, title: $('tTitle').value, certificates: items.map(r => ({ name: r.name, course: r.course, date: r.dateText })) })
+      body: JSON.stringify({ institute: $('tInstitute').value, title: $('tTitle').value, certificates: items.map(r => ({ name: r.name, course: r.course, date: r.dateText })) })
     });
     const data = await res.json();
-    if (!res.ok) { if (res.status === 401) lock(); throw new Error(data.error || 'Server error'); }
+    if (!res.ok) throw new Error(data.error || 'Server error');
 
     const ctx = canvas.getContext('2d'), pages = [], files = [], rows = [['Certificate ID', 'Name', 'Course', 'Issue date', 'Verify URL', 'File']];
     for (let i = 0; i < items.length; i++) {
@@ -169,25 +166,8 @@ async function exportFull(kind) {
 $('dlZipBtn').onclick = () => exportFull('zip');
 $('dlPdfBtn').onclick = () => exportFull('pdf');
 
-/* ------------------------- 4. unlock (backend) ------------------------- */
-function unlock(name, limit) {
-  S.limit = limit || 500; document.body.classList.add('unlocked'); $('unlockedName').textContent = name.split(' ')[0]; delete $('dlNote').dataset.done; refresh();
-}
-function lock() { S.token = ''; localStorage.removeItem('cf_token'); document.body.classList.remove('unlocked'); delete $('dlNote').dataset.done; refresh(); }
-
-$('unlockForm').onsubmit = async e => {
-  e.preventDefault(); const err = $('unlockError'); err.hidden = true; $('unlockBtn').disabled = true;
-  try {
-    const res = await fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: $('uName').value, email: $('uEmail').value, institute: $('uInst').value, designation: $('uDesig').value, phone: $('uPhone').value }) });
-    const d = await res.json();
-    if (!res.ok) throw new Error(d.error);
-    S.token = d.token; localStorage.setItem('cf_token', d.token); unlock(d.name, d.limit);
-    toast('Unlocked! You can now download the full batch.'); $('generator').scrollIntoView();
-  } catch (x) { err.textContent = x instanceof TypeError ? 'Cannot reach the server - start it with "node server.js".' : x.message; err.hidden = false; }
-  finally { $('unlockBtn').disabled = false; }
-};
-if (S.token) fetch('/api/session?token=' + encodeURIComponent(S.token)).then(r => r.json()).then(d => d.valid ? unlock(d.name, d.limit) : lock()).catch(() => {});
+/* ------------------------- 4. always unlocked ------------------------- */
+document.body.classList.add('unlocked');
 
 /* ------------------------- 5. wiring ------------------------- */
 $('chooseBtn').onclick = () => $('fileInput').click();
@@ -222,4 +202,4 @@ $('pagerPrev').onclick = () => { S.idx = (S.idx - 1 + list.length) % list.length
 $('pagerNext').onclick = () => { S.idx = (S.idx + 1) % list.length; refresh(); };
 $('verifyForm').onsubmit = e => { e.preventDefault(); location.href = '/verify/' + encodeURIComponent($('verifyId').value.trim().toUpperCase()); };
 
-$('fbDate').value = todayISO(); $('verifyHost').textContent = ORIGIN.replace(/^https?:\/\//, '') + '/verify/';
+$('fbDate').value = todayISO();

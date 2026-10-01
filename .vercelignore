@@ -1,0 +1,5 @@
+# Local-only files not needed on Vercel
+data/
+lib/api/
+sample_students_list.xlsx
+

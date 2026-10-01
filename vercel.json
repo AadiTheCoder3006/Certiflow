@@ -1,4 +1,14 @@
 {
-  "outputDirectory": "public",
-  "rewrites": [{ "source": "/verify/:id", "destination": "/verify.html" }]
+  "version": 2,
+  "builds": [
+    { "src": "api/**/*.js", "use": "@vercel/node" },
+    { "src": "public/**", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/verify/([^/]+)", "dest": "/public/verify.html" },
+    { "src": "/(.*)", "dest": "/public/$1" }
+  ]
 }
+
+

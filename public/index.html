@@ -17,7 +17,7 @@
     <svg viewBox="0 0 40 40" width="34" height="34" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6c453"/><stop offset="1" stop-color="#ff8a4c"/></linearGradient></defs><rect width="40" height="40" rx="11" fill="url(#g)"/><path d="M11 13h18M11 19h11" stroke="#151033" stroke-width="2.6" stroke-linecap="round"/><circle cx="27" cy="26" r="6" fill="#151033"/><path d="M24.3 26l2 2 3.4-3.6" stroke="#f6c453" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <span>Certi<b>flow</b></span>
   </a>
-  <nav><a href="#generator">Generator</a><a href="#unlock">Full batch</a><a href="#verify">Verify</a></nav>
+  <nav><a href="#generator">Generator</a><a href="#verify">Verify</a></nav>
 </header>
 
 <section class="hero">
@@ -107,36 +107,7 @@
   </section>
 </main>
 
-<section class="unlock" id="unlock">
-  <div class="unlock-copy">
-    <h2>Unlock the full batch &mdash; free</h2>
-    <p>Tell us where to send future updates and unlock everything this tool can do:</p>
-    <ul>
-      <li>Up to 500 certificates per run, no watermark</li>
-      <li>Hosted QR verification for every certificate at <code id="verifyHost">/verify/</code></li>
-      <li>ZIP of individual PDFs + a register CSV of IDs and verify links</li>
-    </ul>
-  </div>
-  <div class="lead-card">
-    <form id="unlockForm" data-locked novalidate>
-      <label>Full name *<input id="uName" placeholder="e.g. Rahul Sharma" autocomplete="name"></label>
-      <label>Work email *<input id="uEmail" type="email" placeholder="e.g. rahul@institute.edu" autocomplete="email"></label>
-      <div class="grid2">
-        <label>Institute / Organisation *<input id="uInst" placeholder="e.g. Sunrise Institute"></label>
-        <label>Designation<input id="uDesig" placeholder="e.g. Training Head"></label>
-      </div>
-      <label>Phone (optional)<input id="uPhone" type="tel" placeholder="+91"></label>
-      <p class="err" id="unlockError" hidden></p>
-      <button class="btn lime" id="unlockBtn" type="submit">Unlock full batch &rarr;</button>
-      <small>Your details are saved on this Certiflow server only.</small>
-    </form>
-    <div class="done" data-unlocked>
-      <div class="tick">&#10003;</div>
-      <h3>Unlocked, <span id="unlockedName"></span>!</h3>
-      <p>Scroll up and use <b>Download all</b> &mdash; up to 500 certificates per run, clean PDFs, live QR verification.</p>
-    </div>
-  </div>
-</section>
+
 
 <section class="verify" id="verify">
   <div><h3>Have a certificate to check?</h3><p>Enter the ID printed on it (or scan its QR code).</p></div>
